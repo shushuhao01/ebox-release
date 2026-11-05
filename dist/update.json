@@ -1,24 +1,19 @@
 {
-    "latestVersion": "v4.0.0",
-    "latestVersionCode": 40000,
+    "latestVersion": "v4.0.1",
+    "latestVersionCode": 40001,
     "releaseDate": "2026/11/5",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "11c029aec2faf108319c56829b3caa046b7a4617b900f949e1ce7a4584411857",
-    "downloadSize": 5709312,
+    "downloadSha256": "f8c494ce6032baad8b77e864da716b9ab9d0b94c1b22ef465e0e4ed3ad118a31",
+    "downloadSize": 5716992,
     "changelog": [
-        "账号体系上线：卡密激活升级为账号登录，换机、重装后登录即可恢复权益",
-        "团队面板：企业版可创建团队，管理员在面板内查看成员、席位与到期时间",
-        "用户管理：支持添加成员、分配与回收席位、停用成员并查看停用原因",
-        "网络配置：新增独立 IP 能力，可按成员分配 IP，并实时查看已分配数量与明细",
-        "独立 IP 支持测试、启用、停用与清除，个人用户与团队成员共用同一套配置界面",
-        "企业版卡密改为登录后激活：激活时自动创建企业并分配席位，不再出现「有卡无企业」",
-        "原有权益完整保留：时长、到期时间与已购权益不受影响，正在使用的环境与登录态也不会丢",
-        "建议升级前先退出正在运行的环境，安装完成后登录账号即可继续使用"
+        "个人中心支持修改昵称，修改后自动同步到服务器",
+        "团队面板「网络配置」标题行新增「配置说明」「IP代理商」入口，可直接查看说明并购买常用代理",
+        "修复永久卡换机码被误判为 0 天过期的问题"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.0/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.1/eBox.exe"
     ]
 }
