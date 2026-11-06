@@ -1,0 +1,160 @@
+# 自动发布：发布 GitHub Release（上传 eBox.exe + tag vX.Y.Z + 正文每行一条更新日志）后自动：
+#   1. 下载 release 资产 exe
+#   2. 计算 SHA-256 / 文件大小，从 tag 解析版本号，从 release 正文提取 changelog
+#   3. 更新 dist/update.json 并推回 main 分支
+#   4. 同步到公开释放仓库 shushuhao01/ebox-release（update.json + eBox.exe），供 jsDelivr / raw 兜底
+#   5. Purge jsDelivr CDN 缓存（客户端拉取 update.json 走 CDN，不 purge 会拿到旧缓存）
+name: Auto Update Manifest
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  update-manifest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Download release exe
+        run: |
+          mkdir -p release_assets
+          # 容忍"先发布后传 exe"的操作：最多等 60 秒直到出现 .exe 资产
+          for i in $(seq 1 20); do
+            gh release download "${{ github.event.release.tag_name }}" \
+              --pattern "*.exe" --dir release_assets && break
+            echo "assets not ready, retry $i/20..."
+            sleep 3
+          done
+          ls -la release_assets
+          [ -n "$(ls release_assets/*.exe 2>/dev/null)" ] || { echo "::error::no exe asset found"; exit 1; }
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Save release body
+        run: gh api "repos/${{ github.repository }}/releases/tags/${{ github.event.release.tag_name }}" --jq .body > release_body.txt
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      # 上传 exe 到国内下载镜像（自有服务器 abc222.cn）。
+      # 未配置仓库变量 DOWNLOAD_MIRROR_BASE 时自动跳过，此时 downloadUrl 回退为 GitHub 直链。
+      # 需要的仓库 Secrets：MIRROR_SSH_HOST / MIRROR_SSH_USER / MIRROR_SSH_KEY（可选 MIRROR_SSH_PORT）
+      # 需要的仓库 Variables：DOWNLOAD_MIRROR_BASE（如 https://abc222.cn/download）、MIRROR_UPLOAD_DIR（如 /www/wwwroot/license-server/download）
+      - name: Upload exe to download mirror
+        if: ${{ vars.DOWNLOAD_MIRROR_BASE != '' }}
+        env:
+          SSH_HOST: ${{ secrets.MIRROR_SSH_HOST }}
+          SSH_USER: ${{ secrets.MIRROR_SSH_USER }}
+          SSH_KEY: ${{ secrets.MIRROR_SSH_KEY }}
+          SSH_PORT: ${{ secrets.MIRROR_SSH_PORT }}
+          UPLOAD_DIR: ${{ vars.MIRROR_UPLOAD_DIR }}
+        run: |
+          set -e
+          : "${UPLOAD_DIR:=/www/wwwroot/license-server/download}"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          PORT="${SSH_PORT:-22}"
+          ssh-keyscan -p "$PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          EXE=$(ls release_assets/*.exe | head -n1)
+          # 固定上传为 eBox.exe（覆盖），供 update.json 的固定 URL 下载
+          ssh -p "$PORT" -i ~/.ssh/id_ed25519 "$SSH_USER@$SSH_HOST" "mkdir -p '$UPLOAD_DIR'"
+          scp -P "$PORT" -i ~/.ssh/id_ed25519 "$EXE" "$SSH_USER@$SSH_HOST:$UPLOAD_DIR/eBox.exe"
+
+      - name: Compute hash & update manifest
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+          PUBLISHED_AT: ${{ github.event.release.published_at }}
+          MIRROR_BASE: ${{ vars.DOWNLOAD_MIRROR_BASE }}
+        run: python3 .github/scripts/update_manifest.py release_assets release_body.txt "$TAG" "$PUBLISHED_AT" "$MIRROR_BASE"
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/update.json
+          if git diff --cached --quiet; then
+            echo "manifest unchanged, skip commit"
+          else
+            git commit -m "chore: auto update update.json for ${{ github.event.release.tag_name }}"
+            git push origin main
+          fi
+
+      # 源码仓库已私有：客户端多源回退里的 jsDelivr / raw.githubusercontent 无法读取本仓库，
+      # 因此把 update.json 与安装包同步到公开仓库 shushuhao01/ebox-release（只放产物，不含源码）。
+      # 需要的仓库 Secret：RELEASE_REPO_TOKEN（对该公开仓库有 contents:write 权限的 PAT）
+      # 未配置时给出告警并跳过，不影响主源与镜像发布。
+      - name: Check public release repo token
+        id: release_repo
+        env:
+          TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+        run: |
+          if [ -n "$TOKEN" ]; then
+            echo "enabled=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=0" >> "$GITHUB_OUTPUT"
+            echo "::warning::RELEASE_REPO_TOKEN 未配置，已跳过公开仓库发布（jsDelivr / raw 兜底源不会更新）"
+          fi
+
+      - name: Publish to public release repo
+        if: ${{ steps.release_repo.outputs.enabled == '1' }}
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_REPO_TOKEN }}
+          RELEASE_REPO: shushuhao01/ebox-release
+          TAG: ${{ github.event.release.tag_name }}
+        run: |
+          set -e
+          # 1) update.json → 公开仓库 dist/（jsDelivr、raw.githubusercontent 兜底源）
+          rm -rf /tmp/release-repo
+          git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${RELEASE_REPO}.git" /tmp/release-repo
+          mkdir -p /tmp/release-repo/dist
+          cp dist/update.json /tmp/release-repo/dist/update.json
+          cd /tmp/release-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dist/update.json
+          if git diff --cached --quiet; then
+            echo "public manifest unchanged, skip commit"
+          else
+            git commit -m "chore: update manifest for ${TAG}"
+            git push origin HEAD:main
+          fi
+          cd "$GITHUB_WORKSPACE"
+          # 2) 安装包 → 公开仓库 Release 资产，固定名 eBox.exe（与 update_manifest.py 的直链一致）
+          mkdir -p /tmp/release-exe
+          cp "$(ls release_assets/*.exe | head -n1)" /tmp/release-exe/eBox.exe
+          if gh release view "$TAG" -R "$RELEASE_REPO" >/dev/null 2>&1; then
+            gh release edit "$TAG" -R "$RELEASE_REPO" --notes-file release_body.txt
+          else
+            gh release create "$TAG" -R "$RELEASE_REPO" --title "$TAG" --notes-file release_body.txt
+          fi
+          gh release upload "$TAG" /tmp/release-exe/eBox.exe -R "$RELEASE_REPO" --clobber
+
+      # 同步 update.json 到国内镜像：客户端多源回退里的 https://abc222.cn/download/update.json
+      # 依赖该文件存在，否则自有源恒为 404。未配置下载镜像时自动跳过。
+      - name: Upload update.json to download mirror
+        if: ${{ vars.DOWNLOAD_MIRROR_BASE != '' }}
+        env:
+          SSH_HOST: ${{ secrets.MIRROR_SSH_HOST }}
+          SSH_USER: ${{ secrets.MIRROR_SSH_USER }}
+          SSH_KEY: ${{ secrets.MIRROR_SSH_KEY }}
+          SSH_PORT: ${{ secrets.MIRROR_SSH_PORT }}
+          UPLOAD_DIR: ${{ vars.MIRROR_UPLOAD_DIR }}
+        run: |
+          set -e
+          : "${UPLOAD_DIR:=/www/wwwroot/license-server/download}"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$SSH_KEY" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          PORT="${SSH_PORT:-22}"
+          ssh-keyscan -p "$PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
+          scp -P "$PORT" -i ~/.ssh/id_ed25519 dist/update.json "$SSH_USER@$SSH_HOST:$UPLOAD_DIR/update.json"
+
+      - name: Purge jsDelivr CDN
+        run: curl -s "https://purge.jsdelivr.net/gh/shushuhao01/ebox-release@main/dist/update.json" || true
