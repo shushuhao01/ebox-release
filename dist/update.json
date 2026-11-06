@@ -1,21 +1,21 @@
 {
-    "latestVersion": "v4.0.1",
-    "latestVersionCode": 40001,
-    "releaseDate": "2026/11/5",
+    "latestVersion": "v4.0.2",
+    "latestVersionCode": 40002,
+    "releaseDate": "2026/11/6",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "6cf1eeb2bcda378de6ca008c5aded44ecaf057d4e8329882270fc23c44d153eb",
-    "downloadSize": 5733888,
+    "downloadSha256": "4efaa6dc88aa475767723a2ca5d56f870a6ecf61bda3eb5f052e52cb72d1520a",
+    "downloadSize": 5734400,
     "changelog": [
-        "用户管理设置弹窗修复与排版优化",
-        "设置弹窗不再被页面搜索框遮挡，居中于内容区显示，点击遮罩、X 或“完成”关闭",
-        "设置项改为卡片式布局（勾选框 + 标题 + 说明），勾选后自动保存，便于后续扩展",
-        "已注销成员显示“恢复”，按席位校验；勾选“删除即彻底删除”后删除将不再保留记录",
-        "修复未勾选“删除后在列表保留”时，历史已注销成员仍在列表中且刷新不消失的问题"
+        "常见问题弹窗里的使用指南与使用手册，改为以后台「官网管理 - 使用手册」配置为准",
+        "后台使用手册新增「立即推送」，改完地址点一下，在线客户端立刻生效",
+        "未配置手册地址时自动使用内置地址，入口不会失效",
+        "官网案例详情页新增浏览量，后台案例列表可直接查看",
+        "优化后台数据看板趋势图图例位置"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.1/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.2/eBox.exe"
     ]
 }
