@@ -1,21 +1,19 @@
 {
-    "latestVersion": "v4.0.2",
-    "latestVersionCode": 40002,
+    "latestVersion": "v4.0.3",
+    "latestVersionCode": 40003,
     "releaseDate": "2026/11/6",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "4efaa6dc88aa475767723a2ca5d56f870a6ecf61bda3eb5f052e52cb72d1520a",
-    "downloadSize": 5734400,
+    "downloadSha256": "0939ec5fec0f99af2c792bc3f87d287881911e9102b8d150cfe2b82ba30a04a2",
+    "downloadSize": 5735936,
     "changelog": [
-        "常见问题弹窗里的使用指南与使用手册，改为以后台「官网管理 - 使用手册」配置为准",
-        "后台使用手册新增「立即推送」，改完地址点一下，在线客户端立刻生效",
-        "未配置手册地址时自动使用内置地址，入口不会失效",
-        "官网案例详情页新增浏览量，后台案例列表可直接查看",
-        "优化后台数据看板趋势图图例位置"
+        "1. 优化环境进程的结束流程：先让应用正常保存数据再退出（最长 6 秒），界面提示「正在结束进程…」",
+        "2. 修复退出登录或切换账号时，环境内应用登录状态可能丢失的问题",
+        "3. 修复新建环境首次启动后，豆包等应用偶发需要重新登录的问题"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.2/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.3/eBox.exe"
     ]
 }
