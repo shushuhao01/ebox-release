@@ -1,19 +1,20 @@
 {
-    "latestVersion": "v4.0.3",
-    "latestVersionCode": 40003,
+    "latestVersion": "v4.0.4",
+    "latestVersionCode": 40004,
     "releaseDate": "2026/11/6",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "0939ec5fec0f99af2c792bc3f87d287881911e9102b8d150cfe2b82ba30a04a2",
-    "downloadSize": 5735936,
+    "downloadSha256": "275e407342bcd99092d0ceb4c35fcc40e05d8350c6867cfdb8fe553619b6d418",
+    "downloadSize": 5736448,
     "changelog": [
-        "1. 优化环境进程的结束流程：先让应用正常保存数据再退出（最长 6 秒），界面提示「正在结束进程…」",
-        "2. 修复退出登录或切换账号时，环境内应用登录状态可能丢失的问题",
-        "3. 修复新建环境首次启动后，豆包等应用偶发需要重新登录的问题"
+        "1. 老版本激活码用户注册或登录后，可自动绑定账号，绑定成功即获得账号权益",
+        "2. 未注册的用户仍可继续使用激活码在本机激活，不影响原有使用方式",
+        "3. 老激活码绑定账号时按本机首次激活时间计算剩余期限，避免重复计时",
+        "4. 优化激活码绑定失败时的提示文案，说明更清晰"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.3/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.4/eBox.exe"
     ]
 }
