@@ -12,7 +12,9 @@
        downloadUrls = [ 主源, GitHub Release 直链 ]  （新客户端多源自动切换）
    - 未传 mirror_base_url 时：downloadUrl = downloadUrls = [ GitHub 直链 ]（保持原行为）
 
-用法：update_manifest.py <assets_dir> <body_file> <tag> <published_at> [mirror_base_url]
+用法：update_manifest.py <assets_dir> <body_file> <tag> <published_at> [mirror_base_url] [product]
+  product=formal（默认）→ dist/update.json + eBox.exe
+  product=game           → dist/update-game.json + eBoxGame.exe
 """
 import hashlib
 import json
@@ -22,6 +24,10 @@ import sys
 
 assets_dir, body_file, tag, published_at = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
 mirror_base_url = sys.argv[5].strip() if len(sys.argv) > 5 else ""
+product = sys.argv[6].strip() if len(sys.argv) > 6 else "formal"
+is_game = product == "game"
+manifest_path = "dist/update-game.json" if is_game else "dist/update.json"
+asset_name = "eBoxGame.exe" if is_game else "eBox.exe"
 
 # 1) 找 exe 资产
 exe_files = [f for f in os.listdir(assets_dir) if f.lower().endswith(".exe")]
@@ -62,8 +68,11 @@ year, month, day = published_at[:10].split("-")
 release_date = f"{year}/{int(month)}/{int(day)}"
 
 # 6) 更新清单（保留其它字段如 minSkipVersionCode / forceUpdate）
-with open("dist/update.json", "r", encoding="utf-8") as f:
-    manifest = json.load(f)
+# 游戏版清单首次发布时自动从空对象开始，避免继承正式版的跳过/强更策略
+manifest = {}
+if os.path.exists(manifest_path):
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
 
 manifest["latestVersion"] = f"v{major}.{minor}.{patch}"
 manifest["latestVersionCode"] = version_code
@@ -71,11 +80,11 @@ manifest["releaseDate"] = release_date
 # GitHub 兜底直链必须指向「公开释放仓库」：源码仓库私有后，未登录客户端访问其 release
 # 资产只会拿到 404。公开仓库只放 update.json 与固定名 eBox.exe，不含源码。
 PUBLIC_REPO = "shushuhao01/ebox-release"
-github_url = f"https://github.com/{PUBLIC_REPO}/releases/download/{tag}/eBox.exe"
+github_url = f"https://github.com/{PUBLIC_REPO}/releases/download/{tag}/{asset_name}"
 if mirror_base_url:
-    # 主源用国内可达的自有服务器；镜像文件名固定为 eBox.exe（由 workflow scp 上传），
+    # 主源用国内可达的自有服务器；镜像文件名固定为 eBox.exe / eBoxGame.exe（由 workflow scp 上传），
     # 与 nginx /download/ alias 下的实际文件名严格一致，避免 asset 名不同导致 404
-    mirror_url = f"{mirror_base_url.rstrip('/')}/eBox.exe"
+    mirror_url = f"{mirror_base_url.rstrip('/')}/{asset_name}"
     manifest["downloadUrl"] = mirror_url
     manifest["downloadUrls"] = [mirror_url, github_url]
 else:
@@ -85,7 +94,7 @@ manifest["downloadSha256"] = sha_hex
 manifest["downloadSize"] = size
 manifest["changelog"] = changelog
 
-with open("dist/update.json", "w", encoding="utf-8") as f:
+with open(manifest_path, "w", encoding="utf-8") as f:
     json.dump(manifest, f, ensure_ascii=False, indent=4)
     f.write("\n")
 

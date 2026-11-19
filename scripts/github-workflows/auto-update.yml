@@ -22,6 +22,23 @@ jobs:
         with:
           ref: main
 
+      # 发布通道分流：v5.* → 游戏版（eBoxGame.exe / update-game.json），其余 → 正式版（eBox.exe / update.json）
+      - name: Detect release channel
+        id: channel
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          if [[ "$TAG" == v5.* ]]; then
+            echo "product=game" >> "$GITHUB_OUTPUT"
+            echo "asset=eBoxGame.exe" >> "$GITHUB_OUTPUT"
+            echo "manifest=dist/update-game.json" >> "$GITHUB_OUTPUT"
+            echo "::notice::游戏版发布通道：$TAG"
+          else
+            echo "product=formal" >> "$GITHUB_OUTPUT"
+            echo "asset=eBox.exe" >> "$GITHUB_OUTPUT"
+            echo "manifest=dist/update.json" >> "$GITHUB_OUTPUT"
+            echo "::notice::正式版发布通道：$TAG"
+          fi
+
       - name: Download release exe
         run: |
           mkdir -p release_assets
@@ -63,26 +80,26 @@ jobs:
           PORT="${SSH_PORT:-22}"
           ssh-keyscan -p "$PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
           EXE=$(ls release_assets/*.exe | head -n1)
-          # 固定上传为 eBox.exe（覆盖），供 update.json 的固定 URL 下载
+          # 固定上传为 eBox.exe / eBoxGame.exe（覆盖），供 update.json / update-game.json 的固定 URL 下载
           ssh -p "$PORT" -i ~/.ssh/id_ed25519 "$SSH_USER@$SSH_HOST" "mkdir -p '$UPLOAD_DIR'"
-          scp -P "$PORT" -i ~/.ssh/id_ed25519 "$EXE" "$SSH_USER@$SSH_HOST:$UPLOAD_DIR/eBox.exe"
+          scp -P "$PORT" -i ~/.ssh/id_ed25519 "$EXE" "$SSH_USER@$SSH_HOST:$UPLOAD_DIR/${{ steps.channel.outputs.asset }}"
 
       - name: Compute hash & update manifest
         env:
           TAG: ${{ github.event.release.tag_name }}
           PUBLISHED_AT: ${{ github.event.release.published_at }}
           MIRROR_BASE: ${{ vars.DOWNLOAD_MIRROR_BASE }}
-        run: python3 .github/scripts/update_manifest.py release_assets release_body.txt "$TAG" "$PUBLISHED_AT" "$MIRROR_BASE"
+        run: python3 .github/scripts/update_manifest.py release_assets release_body.txt "$TAG" "$PUBLISHED_AT" "$MIRROR_BASE" "${{ steps.channel.outputs.product }}"
 
       - name: Commit & push
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/update.json
+          git add "${{ steps.channel.outputs.manifest }}"
           if git diff --cached --quiet; then
             echo "manifest unchanged, skip commit"
           else
-            git commit -m "chore: auto update update.json for ${{ github.event.release.tag_name }}"
+            git commit -m "chore: auto update ${{ steps.channel.outputs.manifest }} for ${{ github.event.release.tag_name }}"
             git push origin main
           fi
 
@@ -114,11 +131,11 @@ jobs:
           rm -rf /tmp/release-repo
           git clone --depth 1 "https://x-access-token:${GH_TOKEN}@github.com/${RELEASE_REPO}.git" /tmp/release-repo
           mkdir -p /tmp/release-repo/dist
-          cp dist/update.json /tmp/release-repo/dist/update.json
+          cp "${{ steps.channel.outputs.manifest }}" "/tmp/release-repo/${{ steps.channel.outputs.manifest }}"
           cd /tmp/release-repo
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add dist/update.json
+          git add "${{ steps.channel.outputs.manifest }}"
           if git diff --cached --quiet; then
             echo "public manifest unchanged, skip commit"
           else
@@ -128,13 +145,13 @@ jobs:
           cd "$GITHUB_WORKSPACE"
           # 2) 安装包 → 公开仓库 Release 资产，固定名 eBox.exe（与 update_manifest.py 的直链一致）
           mkdir -p /tmp/release-exe
-          cp "$(ls release_assets/*.exe | head -n1)" /tmp/release-exe/eBox.exe
+          cp "$(ls release_assets/*.exe | head -n1)" "/tmp/release-exe/${{ steps.channel.outputs.asset }}"
           if gh release view "$TAG" -R "$RELEASE_REPO" >/dev/null 2>&1; then
             gh release edit "$TAG" -R "$RELEASE_REPO" --notes-file release_body.txt
           else
             gh release create "$TAG" -R "$RELEASE_REPO" --title "$TAG" --notes-file release_body.txt
           fi
-          gh release upload "$TAG" /tmp/release-exe/eBox.exe -R "$RELEASE_REPO" --clobber
+          gh release upload "$TAG" "/tmp/release-exe/${{ steps.channel.outputs.asset }}" -R "$RELEASE_REPO" --clobber
 
       # 同步 update.json 到国内镜像：客户端多源回退里的 https://abc222.cn/download/update.json
       # 依赖该文件存在，否则自有源恒为 404。未配置下载镜像时自动跳过。
@@ -154,7 +171,11 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           PORT="${SSH_PORT:-22}"
           ssh-keyscan -p "$PORT" -H "$SSH_HOST" >> ~/.ssh/known_hosts 2>/dev/null
-          scp -P "$PORT" -i ~/.ssh/id_ed25519 dist/update.json "$SSH_USER@$SSH_HOST:$UPLOAD_DIR/update.json"
+          scp -P "$PORT" -i ~/.ssh/id_ed25519 "${{ steps.channel.outputs.manifest }}" "$SSH_USER@$SSH_HOST:$UPLOAD_DIR/$(basename "${{ steps.channel.outputs.manifest }}")"
 
       - name: Purge jsDelivr CDN
-        run: curl -s "https://purge.jsdelivr.net/gh/shushuhao01/ebox-release@main/dist/update.json" || true
+        run: |
+          curl -s "https://purge.jsdelivr.net/gh/shushuhao01/ebox-release@main/${{ steps.channel.outputs.manifest }}" || true
+          if [ "${{ steps.channel.outputs.product }}" = "game" ]; then
+            curl -s "https://purge.jsdelivr.net/gh/shushuhao01/ebox-release@main/dist/update.json" || true
+          fi

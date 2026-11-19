@@ -38,14 +38,16 @@ if ($Tag -notmatch '^[vV]?(\d+)\.(\d+)\.(\d+)$') { Fail "tag 格式应为 vX.Y.Z
 $tagMajor, $tagMinor, $tagPatch = [int]$Matches[1], [int]$Matches[2], [int]$Matches[3]
 $Tag = "v$tagMajor.$tagMinor.$tagPatch"
 
-$mainApp = Join-Path $Root "eBox\app\MainApp.ixx"
-if (Test-Path $mainApp) {
-    $src = Get-Content $mainApp -Raw
-    $major = if ($src -match 'kVerMajor\s*=\s*(\d+)') { [int]$Matches[1] } else { -1 }
-    $minor = if ($src -match 'kVerMinor\s*=\s*(\d+)') { [int]$Matches[1] } else { -1 }
-    $patch = if ($src -match 'kVerPatch\s*=\s*(\d+)') { [int]$Matches[1] } else { -1 }
+$versionDefs = Join-Path $Root "common\header_units\product_defs.h"
+if (Test-Path $versionDefs) {
+    $src = [IO.File]::ReadAllText((Resolve-Path $versionDefs).Path, [Text.Encoding]::UTF8)
+    # 只看正式版分支（游戏版在前），避免匹配到 v5.x
+    $formal = ($src -split '===== 正式版')[1]
+    $major = if ($formal -match 'verMajor\s*=\s*(\d+)') { [int]$Matches[1] } else { -1 }
+    $minor = if ($formal -match 'verMinor\s*=\s*(\d+)') { [int]$Matches[1] } else { -1 }
+    $patch = if ($formal -match 'verPatch\s*=\s*(\d+)') { [int]$Matches[1] } else { -1 }
     if ($major -ne $tagMajor -or $minor -ne $tagMinor -or $patch -ne $tagPatch) {
-        Fail "tag 与 MainApp.ixx 版本号不一致：源码是 v$major.$minor.$patch，tag 是 $Tag（请先改版本号并重新构建）"
+        Fail "tag 与 product_defs.h 版本号不一致：源码是 v$major.$minor.$patch，tag 是 $Tag（请先改版本号并重新构建）"
     }
     Write-Host "    源码版本 v$major.$minor.$patch 与 tag 一致" -ForegroundColor DarkGray
 }
@@ -67,7 +69,7 @@ if ($dirty) {
 Write-Host "==> 2/4 读取更新日志" -ForegroundColor Cyan
 if ($NotesFile) {
     if (-not (Test-Path $NotesFile)) { Fail "更新日志文件不存在：$NotesFile" }
-    $Notes = Get-Content $NotesFile -Raw
+    $Notes = [IO.File]::ReadAllText((Resolve-Path $NotesFile).Path, [Text.Encoding]::UTF8)
 }
 $Notes = ($Notes -replace "`r`n", "`n").Trim()
 if (-not $Notes) { Fail "缺少更新日志：请用 -Notes 或 -NotesFile（客户端会逐行显示）" }
