@@ -1,19 +1,19 @@
 {
-    "latestVersion": "v4.0.5",
-    "latestVersionCode": 40005,
+    "latestVersion": "v4.0.6",
+    "latestVersionCode": 40006,
     "releaseDate": "2026/11/19",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "ba5b883c42cd3707e23a0ae4a5be502022449fec3802f277b1e828cd98925ab9",
-    "downloadSize": 5757440,
+    "downloadSha256": "01501b1972748ba85c7b7661ff67bf1d6e91a078af9aca954a8cbd9295b3210d",
+    "downloadSize": 5758464,
     "changelog": [
-        "修复企业微信等原生客户端复制的图片粘贴到 eBox 环境后不显示的问题",
-        "环境内读取剪贴板时隐藏其他环境残留的私有图片格式，改用共享文件路径读取",
-        "图片缓存文件可按需继承到环境，跨环境复制粘贴更稳定"
+        "修复账号登录用户「网络配置 → IP 代理商」弹窗为空的问题",
+        "后台推送代理商后，账号模式客户端实时刷新，无需重启",
+        "版本号升至 v4.0.6"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.5/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.6/eBox.exe"
     ]
 }
