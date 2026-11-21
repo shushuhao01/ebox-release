@@ -1,19 +1,29 @@
 {
-    "latestVersion": "v4.0.6",
-    "latestVersionCode": 40006,
-    "releaseDate": "2026/11/19",
+    "latestVersion": "v4.0.8",
+    "latestVersionCode": 40008,
+    "releaseDate": "2026/11/21",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "01501b1972748ba85c7b7661ff67bf1d6e91a078af9aca954a8cbd9295b3210d",
-    "downloadSize": 5758464,
+    "downloadSha256": "16231aae011cf8e42ec79e5d7aaf3b8ca964b132b2fb616148ee8879e63090db",
+    "downloadSize": 5791232,
     "changelog": [
-        "修复账号登录用户「网络配置 → IP 代理商」弹窗为空的问题",
-        "后台推送代理商后，账号模式客户端实时刷新，无需重启",
-        "版本号升至 v4.0.6"
+        "【应用多开】",
+        "· Discord / Slack / GitHub Desktop 等 Squirrel 安装器应用支持多开",
+        "· Telegram 绿色版为每个环境使用独立工作目录，账号数据互不干扰",
+        "· 抖音直播伴侣设备信息放行，登录不再触发风控",
+        "· 设备指纹优化：MAC 保留厂商前缀，磁盘序列号与型号改写更自然",
+        "【数据安全】",
+        "· 修复全盘清理后企业微信客户备注、标签、添加时间消失的问题",
+        "· 清理聊天记录改为只删消息库与搜索索引，客户资料库（crm.db / user.db）始终保留",
+        "· 全盘清理新增\"是否清理聊天记录\"确认，默认只清缓存",
+        "· 修复环境首次继承数据库时可能拿到空壳库、导致备注丢失的问题",
+        "· 全盘清理自动识别自定义数据盘，不再误扫",
+        "【版本】",
+        "· 版本号升至 4.0.8（40008）"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.6/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.8/eBox.exe"
     ]
 }
