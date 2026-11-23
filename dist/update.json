@@ -1,28 +1,26 @@
 {
-    "latestVersion": "v4.0.8",
-    "latestVersionCode": 40008,
-    "releaseDate": "2026/11/22",
+    "latestVersion": "v4.0.9",
+    "latestVersionCode": 40009,
+    "releaseDate": "2026/11/23",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "95b8cbfbecdcda4153a31a9578a4397935089a238634b92882b3a837453bf680",
-    "downloadSize": 5821440,
+    "downloadSha256": "10c41569545674d33f4e1be576712ee9801fa8b5695b2588c7f47fdf902698c1",
+    "downloadSize": 5856256,
     "changelog": [
-        "【抖音直播伴侣】",
-        "· 适配直播伴侣 13.4.1 新版架构：等待媒体引擎 IPC 管道就绪，不再提示\"文件缺失，请尝试重新安装\"",
-        "· 媒体引擎的命名对象不再追加环境后缀，多开环境下引擎与客户端可正常握手",
-        "· 新建环境自动预置平台信息（抖音），标题、\"其他登录方式\"与扫码登录恢复正常，不再出现\"访问太频繁\"",
-        "【性能优化】",
-        "· 文件重定向任务去重，同一素材不会重复排队，大幅减少大素材加载等待",
-        "· 拷贝线程数按 CPU 核数动态调整（4-8），多开同时加载素材更快",
-        "· 已知文件夹判定增加缓存，降低高频文件访问开销",
-        "【官网】",
-        "· 支持多开应用图标墙新增\"直播伴侣\"高清图标",
+        "【网络诊断与一键修复】",
+        "· 登录 / 注册页右上角新增网络状态：打开即后台自检，正常显示「● 网络正常」，异常显示「● 网络异常 · 点此修复」",
+        "· 点击后依次检测域名解析、端口连通、HTTPS 请求、代理配置、服务器地址覆盖与 hosts 屏蔽",
+        "· 网络不通先自动做用户级修复并复测；仍不通时提示一次，再以管理员身份执行系统级修复，修完自动复测并弹出结论",
+        "· 启动进入登录页不弹 UAC，系统级修复仅在用户点击并确认后执行",
+        "· 设置弹窗右上角复用同一网络状态组件，同样支持测试与修复",
+        "· 登录失败提示补充真实错误码，便于定位问题",
+        "· 诊断报告统一脱敏：服务器域名显示为 ***，IPv4 仅保留首段",
         "【版本】",
-        "· 版本号保持 4.0.8（40008），本版为同版本覆盖更新"
+        "· 版本号升至 4.0.9（40009）"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.8/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.9/eBox.exe"
     ]
 }
