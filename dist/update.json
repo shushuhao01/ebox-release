@@ -3,14 +3,14 @@
     "latestVersionCode": 40100,
     "releaseDate": "2026/11/24",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "8701ae621a6f14de99da900cf4f1217bd361b821e161247860aad2e26721c6d5",
-    "downloadSize": 5879808,
+    "downloadSha256": "ecafcfb34dab8f4d6e71afd11904f701db7a1b8eacca3194a86f867d6cbf40ee",
+    "downloadSize": 5877248,
     "changelog": [
-        "正式版标题栏新增「游戏版」入口，点击直达游戏版专题页与下载",
-        "游戏版入口由后台统一配置，未配置时不显示，不影响原有界面布局",
+        "正式版标题栏保持原有布局，不放置游戏版入口",
+        "「了解 eBox 游戏版」入口移至设置页「关于」，由后台统一配置后显示",
         "客户端配置缓存升级并兼容旧数据，升级后登录状态保持不变",
         "账号登录、激活、心跳与授权通讯逻辑保持稳定",
-        "版本号升至 4.1.0（内部版本 40100）"
+        "版本号 4.1.0（内部版本 40100）"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
