@@ -1,26 +1,21 @@
 {
-    "latestVersion": "v4.0.9",
-    "latestVersionCode": 40009,
-    "releaseDate": "2026/11/23",
+    "latestVersion": "v4.1.0",
+    "latestVersionCode": 40100,
+    "releaseDate": "2026/11/24",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "10c41569545674d33f4e1be576712ee9801fa8b5695b2588c7f47fdf902698c1",
-    "downloadSize": 5856256,
+    "downloadSha256": "8701ae621a6f14de99da900cf4f1217bd361b821e161247860aad2e26721c6d5",
+    "downloadSize": 5879808,
     "changelog": [
-        "【网络诊断与一键修复】",
-        "· 登录 / 注册页右上角新增网络状态：打开即后台自检，正常显示「● 网络正常」，异常显示「● 网络异常 · 点此修复」",
-        "· 点击后依次检测域名解析、端口连通、HTTPS 请求、代理配置、服务器地址覆盖与 hosts 屏蔽",
-        "· 网络不通先自动做用户级修复并复测；仍不通时提示一次，再以管理员身份执行系统级修复，修完自动复测并弹出结论",
-        "· 启动进入登录页不弹 UAC，系统级修复仅在用户点击并确认后执行",
-        "· 设置弹窗右上角复用同一网络状态组件，同样支持测试与修复",
-        "· 登录失败提示补充真实错误码，便于定位问题",
-        "· 诊断报告统一脱敏：服务器域名显示为 ***，IPv4 仅保留首段",
-        "【版本】",
-        "· 版本号升至 4.0.9（40009）"
+        "正式版标题栏新增「游戏版」入口，点击直达游戏版专题页与下载",
+        "游戏版入口由后台统一配置，未配置时不显示，不影响原有界面布局",
+        "客户端配置缓存升级并兼容旧数据，升级后登录状态保持不变",
+        "账号登录、激活、心跳与授权通讯逻辑保持稳定",
+        "版本号升至 4.1.0（内部版本 40100）"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.0.9/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.1.0/eBox.exe"
     ]
 }
