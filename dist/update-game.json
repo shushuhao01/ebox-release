@@ -1,0 +1,19 @@
+{
+    "latestVersion": "v5.1.0",
+    "latestVersionCode": 50100,
+    "releaseDate": "2026/11/24",
+    "downloadUrl": "https://abc222.cn/download/eBoxGame.exe",
+    "downloadUrls": [
+        "https://abc222.cn/download/eBoxGame.exe",
+        "https://github.com/shushuhao01/ebox-release/releases/download/v5.1.0/eBoxGame.exe"
+    ],
+    "downloadSha256": "029f721ee18acc4bba05e354a2153c2794188acdce5cc4e8f6042eb90157b7cd",
+    "downloadSize": 6385152,
+    "changelog": [
+        "1. 修复虚拟机模式首次使用下载基础镜像失败或中断的问题：支持断点续传，下载前检查磁盘空间，校验过程有明显提示",
+        "2. 基础镜像下载源改为云存储优先，国内下载更快更稳定",
+        "3. 增强游戏版隔离能力：网络代理拦截、网卡地址扰动与硬件信息伪装更完整",
+        "4. 新增环境一键重置，可快速恢复干净的运行环境",
+        "5. 优化环境详情与清理功能，文件过大复制时给出明确提示"
+    ]
+}
