@@ -7,7 +7,7 @@
         "https://abc222.cn/download/eBoxGame.exe",
         "https://github.com/shushuhao01/ebox-release/releases/download/v5.1.0/eBoxGame.exe"
     ],
-    "downloadSha256": "029f721ee18acc4bba05e354a2153c2794188acdce5cc4e8f6042eb90157b7cd",
+    "downloadSha256": "e22bd9636988a10f9c7c8613ead9f069a7ec22dd9f0553704d76b6c36fa71726",
     "downloadSize": 6385152,
     "changelog": [
         "1. 修复虚拟机模式首次使用下载基础镜像失败或中断的问题：支持断点续传，下载前检查磁盘空间，校验过程有明显提示",
