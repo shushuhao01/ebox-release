@@ -1,19 +1,20 @@
 {
-    "latestVersion": "v5.1.0",
-    "latestVersionCode": 50100,
-    "releaseDate": "2026/11/24",
+    "latestVersion": "v5.1.1",
+    "latestVersionCode": 50101,
+    "releaseDate": "2026/11/25",
     "downloadUrl": "https://abc222.cn/download/eBoxGame.exe",
     "downloadUrls": [
         "https://abc222.cn/download/eBoxGame.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v5.1.0/eBoxGame.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v5.1.1/eBoxGame.exe"
     ],
-    "downloadSha256": "e22bd9636988a10f9c7c8613ead9f069a7ec22dd9f0553704d76b6c36fa71726",
-    "downloadSize": 6385152,
+    "downloadSha256": "e3b08e78d5fef85388db23096cfa6780ce9a859732f1f7a7df10ac91602a28b3",
+    "downloadSize": 6419456,
     "changelog": [
-        "1. 修复虚拟机模式首次使用下载基础镜像失败或中断的问题：支持断点续传，下载前检查磁盘空间，校验过程有明显提示",
-        "2. 基础镜像下载源改为云存储优先，国内下载更快更稳定",
-        "3. 增强游戏版隔离能力：网络代理拦截、网卡地址扰动与硬件信息伪装更完整",
-        "4. 新增环境一键重置，可快速恢复干净的运行环境",
-        "5. 优化环境详情与清理功能，文件过大复制时给出明确提示"
+        "v5.1.1 更新内容",
+        "1. 修复多开后第 3 个角色被「每台机器最多只允许登录2个角色」拦截的问题",
+        "2. 优化子进程注入时机（8 秒 → 250 毫秒），机器码在客户端读取前完成隔离",
+        "3. 修复部分环境卡欢迎画面、进不到登录页、服务器断开的问题",
+        "4. 子进程隔离组兜底为「指纹 + 网卡 + 网络」，避免异常配置导致登录页崩溃",
+        "5. Hook 自检日志新增注入耗时，便于快速定位；关闭诊断探针减少磁盘写入"
     ]
 }
