@@ -1,24 +1,22 @@
 {
-    "latestVersion": "v4.1.0",
-    "latestVersionCode": 40100,
-    "releaseDate": "2026/11/25",
+    "latestVersion": "v4.2.0",
+    "latestVersionCode": 40200,
+    "releaseDate": "2026/11/28",
     "downloadUrl": "https://abc222.cn/download/eBox.exe",
-    "downloadSha256": "ff1f6e9eec9b7ad21ea656fb81a51ad79733170c20bef73b6c80da0a95c5526b",
-    "downloadSize": 5886464,
+    "downloadSha256": "540db07b7f86f20188b2563b446707eae831c5c4d409907c5e037fcd8bcac05c",
+    "downloadSize": 5897216,
     "changelog": [
-        "正式版标题栏保持原有布局，不放置游戏版入口",
-        "「了解 eBox 游戏版」入口移至设置页「关于」，由后台统一配置后显示",
-        "客户端配置缓存升级并兼容旧数据，升级后登录状态保持不变",
-        "账号登录、激活、心跳与授权通讯逻辑保持稳定",
-        "版本号 4.1.0（内部版本 40100）",
-        "修复：登录与切换账号时主窗口偶发白屏或「未响应」，账号环境重载改为后台线程执行",
-        "修复：登录框「网络异常 · 点此修复」的检测与修复不再占用界面，进度实时显示",
-        "优化：登录、注册、换机重登的设备指纹计算移出界面线程，点击响应更快"
+        "v4.2.0 更新内容",
+        "1. 修复剪映等\"启动器型\"应用无法多开：第二个环境不再被同一实例抢占，可同时打开多个窗口",
+        "2. 修复环境一直显示\"首次初始化中\"：环境长时间没有进程时自动结束初始化",
+        "3. 多开稳定性提升：加强子进程注入与进程列表隔离，避免多开实例互相结束",
+        "4. 启动提示：检测到程序使用本机固定端口中转时，提示改用虚拟机后端以获得完整多开",
+        "5. 版本号更新至 v4.2.0（2026-11-28）"
     ],
     "minSkipVersionCode": 0,
     "forceUpdate": false,
     "downloadUrls": [
         "https://abc222.cn/download/eBox.exe",
-        "https://github.com/shushuhao01/ebox-release/releases/download/v4.1.0/eBox.exe"
+        "https://github.com/shushuhao01/ebox-release/releases/download/v4.2.0/eBox.exe"
     ]
 }
